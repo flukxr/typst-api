@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in @flukxr/typst-api behaves incorrectly.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. The output of `await typst.diagnose()` and the raw
+        `error.process` record (stdout, stderr, exit code) help the most.
+  - type: input
+    id: api-version
+    attributes:
+      label: "@flukxr/typst-api version"
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: typst-version
+    attributes:
+      label: Exact Typst version (`typst --version`)
+      placeholder: "0.15.1"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: OS, architecture, and Node.js version
+      placeholder: "Windows 11 x64, Node.js 22.14.0"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: The smallest code and Typst source that show the problem.
+      render: js
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: "`diagnose()` report and raw process output"
+      render: text

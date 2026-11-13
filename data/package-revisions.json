@@ -1,0 +1,5 @@
+{
+  "policy": "The snapshot collector resolves the highest published <typst-version>-npm.N by default. This file is only for explicit pinning or exceptions.",
+  "default": "latest",
+  "overrides": {}
+}

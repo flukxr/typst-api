@@ -1,0 +1,18 @@
+node_modules/
+dist/
+coverage/
+*.tgz
+.cache/
+.DS_Store
+# The exact per-release snapshot corpus lives in its own repository,
+# flukxr/typst-snapshots, and is resolved through TYPST_API_SNAPSHOT_ROOT (or a
+# sibling checkout). Any local `snapshots/` directory is machine-local output
+# from running the collectors without that root configured, and CI checks the
+# corpus out under `snapshot-corpus/`.
+/snapshots/
+/snapshot-corpus/
+
+# Per-platform probe evidence collected by CI; review and commit deliberately
+# instead of leaving a machine-local scatter on disk. Committed high-level
+# sweep evidence lives under data/sweep/.
+snapshots-ci/

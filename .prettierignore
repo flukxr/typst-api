@@ -1,0 +1,13 @@
+# Build output and dependencies
+dist/
+node_modules/
+coverage/
+.cache/
+
+# Generated or tool-written data; the scripts own its formatting.
+data/
+benchmarks/baselines.json
+snapshots/
+snapshot-corpus/
+snapshots-ci/
+package-lock.json

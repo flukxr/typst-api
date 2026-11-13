@@ -1,0 +1,83 @@
+{
+  "name": "@flukxr/typst-api",
+  "version": "1.0.0",
+  "private": false,
+  "description": "Unofficial typed, version-aware Node.js API over the native Typst CLI.",
+  "keywords": [
+    "typst",
+    "typesetting",
+    "pdf",
+    "cli",
+    "compiler",
+    "version-aware",
+    "typed"
+  ],
+  "homepage": "https://github.com/flukxr/typst-api#readme",
+  "bugs": {
+    "url": "https://github.com/flukxr/typst-api/issues"
+  },
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flukxr/typst-api.git"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "data/capabilities.seed.json",
+    "README.md",
+    "LICENSE",
+    "!dist/.tsbuildinfo"
+  ],
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "inventory:check": "node scripts/update-release-inventory.mjs --check",
+    "inventory:update": "node scripts/update-release-inventory.mjs --prepare",
+    "watch:upstream": "node scripts/watch-upstream.mjs",
+    "watch:upstream:prepare": "node scripts/watch-upstream.mjs --prepare",
+    "sweep:historical": "node scripts/high-level-sweep.mjs",
+    "probes:behavior": "node scripts/behavior-probes.mjs",
+    "probes:format": "node scripts/check-output-format.mjs",
+    "pm:check": "npm run build && node scripts/pm-check.mjs",
+    "bench": "npm run build && node scripts/benchmark.mjs",
+    "bench:check": "npm run build && node scripts/benchmark.mjs --check",
+    "validate:data": "node scripts/validate-data.mjs",
+    "generate:capabilities": "node scripts/generate-capabilities.mjs",
+    "generate:flags": "node scripts/generate-cli-flags.mjs",
+    "generate:check": "node scripts/generate-capabilities.mjs --check && node scripts/generate-cli-flags.mjs --check",
+    "build": "npm run generate:check && tsc -p tsconfig.json",
+    "freeze:check": "npm run build && node scripts/freeze-check.mjs",
+    "consumer:types": "npm run build && node scripts/consumer-typecheck.mjs",
+    "typecheck": "npm run generate:check && tsc -p tsconfig.json --noEmit --incremental false",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "npm run validate:data && npm run typecheck && npm run format:check",
+    "test": "npm run build && node --test",
+    "verify": "npm run clean && npm run lint && npm test && npm run freeze:check && npm run consumer:types",
+    "package:smoke": "npm run build && node scripts/package-smoke.mjs",
+    "release:check": "node scripts/release-check.mjs",
+    "prepack": "npm run verify"
+  },
+  "devDependencies": {
+    "@flukxr/typst-cli": "^0.15.1-npm.0",
+    "@types/node": "20.19.43",
+    "ajv": "8.20.0",
+    "prettier": "3.9.6",
+    "typescript": "7.0.2"
+  }
+}

@@ -1,0 +1,21 @@
+name: Feature request
+description: Suggest an API addition or support for new Typst CLI surface.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What do you want to do?
+      description: Describe the use case. Mention whether `run(args)` works as a workaround today.
+    validations:
+      required: true
+  - type: input
+    id: typst-version
+    attributes:
+      label: Exact Typst version(s) involved
+      placeholder: "0.15.1"
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      render: ts

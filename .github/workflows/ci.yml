@@ -1,0 +1,211 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      # Optional exact stable version to force-prepare, used to exercise the
+      # prepare -> pull-request pipeline manually (e.g. with a placeholder).
+      version:
+        description: "Exact stable Typst version to prepare (e.g. 0.99.0)"
+        required: false
+        type: string
+  schedule:
+    # Nightly upstream check; prepares and opens a review PR, never advances
+    # coverage automatically.
+    - cron: "17 3 * * *"
+
+jobs:
+  unit:
+    name: unit (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+      # The public surface must match the frozen spec exactly.
+      - run: npm run freeze:check
+      # A strict ESM consumer with moduleResolution: NodeNext must type-check.
+      - run: npm run consumer:types
+
+  integration:
+    name: integration (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # The real integration suite resolves the `@flukxr/typst-cli`
+      # dev-dependency binary and skips when the platform has no package.
+      - run: node --test test/integration.real.test.mjs
+      # Every runnable example is executed against the real binary; the suite
+      # skips when the platform has no package.
+      - run: node --test test/examples.test.mjs
+
+  # Performance regression guards. Only relative assertions run in CI (cache
+  # effectiveness, wrapper-overhead ratios, memory bounds); absolute wall times
+  # are recorded in the local baseline and never asserted on shared runners.
+  bench:
+    name: bench guards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run bench:check
+
+  # Package-manager verification. npm is always checked; pnpm and yarn are
+  # exercised through corepack when Node ships it. Managers that cannot run on
+  # the host are skipped, not failed.
+  pm:
+    name: package managers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run pm:check
+
+  # Scheduled upstream watcher. Runs on the nightly schedule and on manual
+  # dispatch (not on push or PR), detects exact stable releases published
+  # upstream, prepares the data-update change (inventory, snapshots, and review
+  # report) through `inventory:update --prepare`, pulls the freshest sweep
+  # evidence artifacts, and opens a pull request with the ready diff. Coverage
+  # is never advanced automatically: the change always lands as a PR that
+  # requires review before merge, and nothing is committed to `main` directly.
+  upstream:
+    name: upstream watch
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: read
+    env:
+      # Fine-grained PAT with read/write `contents` and `pull-requests` on
+      # flukxr/typst-snapshots. Reading the public corpus needs no token; the
+      # token is only required to open the snapshot pull request.
+      TYPST_SNAPSHOTS_TOKEN: ${{ secrets.TYPST_SNAPSHOTS_TOKEN }}
+      TYPST_API_SNAPSHOT_ROOT: ${{ github.workspace }}/snapshot-corpus
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      # The output-format check runs the built parsers over new raw output.
+      - run: npm run build
+      # The exact-version snapshot corpus lives in its own public repository,
+      # flukxr/typst-snapshots. Check it out as a workspace-local directory so
+      # new releases are diffed against the committed evidence.
+      - name: Check out the snapshot corpus
+        uses: actions/checkout@v4
+        with:
+          repository: flukxr/typst-snapshots
+          token: ${{ secrets.TYPST_SNAPSHOTS_TOKEN || github.token }}
+          path: snapshot-corpus
+      # Prepare the data-update change for any new release. The prepare command
+      # exits non-zero when it found new releases (its alert contract), so this
+      # step must not fail the job; the PR step decides based on git status.
+      - name: Prepare upstream release data
+        id: prepare
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set +e
+          if [ -n "${{ inputs.version }}" ]; then
+            node scripts/force-upstream-prepare.mjs "${{ inputs.version }}"
+          else
+            npm run watch:upstream:prepare
+          fi
+          status=$?
+          set -e
+          echo "prepare_status=$status" >> "$GITHUB_OUTPUT"
+          exit 0
+      # Pull the freshest sweep evidence (per-platform high-level sweep and
+      # behavior probes) so the PR can carry them for review. Best effort: if
+      # no sweep artifacts exist yet, the PR simply omits them.
+      - name: Pull sweep evidence
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p .sweep
+          gh run download --repo "$GITHUB_REPOSITORY" --workflow sweep.yml --pattern 'sweep-evidence-*' --dir .sweep 2>/dev/null || true
+          if compgen -G ".sweep/*/data/sweep/*.json" > /dev/null; then
+            cp .sweep/*/data/sweep/*.json data/sweep/ 2>/dev/null || true
+          fi
+          if compgen -G ".sweep/*/snapshots-ci/*" > /dev/null; then
+            mkdir -p snapshot-corpus
+            cp -r .sweep/*/snapshots-ci/. snapshot-corpus/ 2>/dev/null || true
+          fi
+          rm -rf .sweep
+      - name: Validate prepared data
+        run: npm run validate:data
+      # Open a pull request with the prepared diff; never commit to main.
+      - name: Open pull request
+        if: steps.prepare.outputs.prepare_status != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No new releases; nothing to open a PR for."
+            exit 0
+          fi
+          branch="upstream/$(date -u +%Y%m%d%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add -A
+          git commit -m "chore: prepare upstream release review"
+          git push -u origin "$branch"
+          body="Prepared by the nightly upstream watcher. Review the review reports under \`release-reviews/\`, the exact snapshot diffs, and the capability changes before merging. Coverage is not advanced automatically."
+          gh pr create --base main --head "$branch" --title "chore: prepare new Typst release review" --body "$body"
+      # Snapshot evidence is committed to the corpus repository through a pull
+      # request. This needs the corpus token; without it the snapshot change is
+      # left for a maintainer to collect locally.
+      - name: Open snapshot corpus pull request
+        if: ${{ env.TYPST_SNAPSHOTS_TOKEN != '' && steps.prepare.outputs.prepare_status != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.TYPST_SNAPSHOTS_TOKEN }}
+        run: |
+          cd snapshot-corpus
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "No snapshot changes; nothing to open a PR for."
+            exit 0
+          fi
+          branch="upstream/$(date -u +%Y%m%d%H%M%S)"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add -A
+          git commit -m "chore: collect snapshots for upstream release review"
+          git push -u origin "$branch"
+          body="Snapshot corpus updated by the nightly upstream watcher in flukxr/typst-api. Review the exact per-release snapshots and \`_diffs/\` before merging. Coverage is not advanced automatically."
+          gh pr create --repo flukxr/typst-snapshots --base main --head "$branch" --title "chore: prepare new Typst release snapshots" --body "$body"

@@ -1,0 +1,53 @@
+name: Historical sweep evidence
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly cross-platform sweep; results are collected as an artifact for
+    # review and commit. Sweep evidence is never auto-committed or used to mark
+    # a release supported without review.
+    - cron: "23 5 * * 1"
+
+jobs:
+  sweep:
+    name: sweep (${{ matrix.platform }} / ${{ matrix.arch }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            arch: x64
+          - os: windows-latest
+            platform: win32
+            arch: x64
+          - os: macos-latest
+            platform: darwin
+            arch: arm64
+          - os: ubuntu-24.04-arm
+            platform: linux
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Collect per-platform high-level sweep evidence into the committed
+      # data/sweep/ layout; each runner writes its own platform/arch file so
+      # evidence can be reviewed and committed without overwriting the others.
+      # Run through `npm run` so the sweep resolves its npm context on every OS.
+      - run: npm run sweep:historical -- --out=data/sweep/${{ matrix.platform }}-${{ matrix.arch }}.json
+      # Collect behavior probes into a per-platform snapshot root.
+      - run: npm run probes:behavior -- --snapshot-root=snapshots-ci/${{ matrix.platform }}-${{ matrix.arch }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sweep-evidence-${{ matrix.platform }}-${{ matrix.arch }}
+          if-no-files-found: error
+          path: |
+            data/sweep/${{ matrix.platform }}-${{ matrix.arch }}.json
+            snapshots-ci/**/behavior/*.json
+            snapshots-ci/**/behavior/*.txt

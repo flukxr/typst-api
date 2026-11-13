@@ -1,0 +1,130 @@
+name: Publish
+
+# Releases are published only from reviewed CI, with npm trusted publishing
+# (OIDC) and provenance. No npm token is used: the npm registry trusts this
+# workflow file of flukxr/typst-api as configured in the package settings on
+# npmjs.com. The workflow runs on version tags (v<semver>); anything else fails
+# before any gate or publish step runs.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: release ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # create the GitHub release
+      id-token: write # npm trusted publishing (OIDC) and provenance attestation
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      # Trusted publishing requires npm >= 11.5.1; Node 22 ships npm 10.
+      - name: upgrade npm for trusted publishing
+        run: npm install --global npm@^11.5.1 && npm --version
+
+      - name: derive package version from tag
+        run: |
+          node -e '
+            const ref = process.env.GITHUB_REF_NAME;
+            const version = ref.replace(/^v/, "");
+            if (!/^\d+\.\d+\.\d+$/.test(version)) {
+              throw new Error("tag is not v<major>.<minor>.<patch>: " + ref);
+            }
+            const pkg = require("./package.json");
+            if (pkg.version !== version) {
+              throw new Error(
+                "package.json version " + pkg.version + " does not match tag " + ref,
+              );
+            }
+            const changelog = require("node:fs").readFileSync("CHANGELOG.md", "utf8");
+            if (!changelog.split(/\r?\n/).some((l) => l.startsWith(`## [${version}]`))) {
+              throw new Error("CHANGELOG.md has no ## [" + version + "] section");
+            }
+            require("node:fs").appendFileSync(
+              process.env.GITHUB_ENV,
+              `PACKAGE_VERSION=${version}\n`,
+            );
+          '
+
+      - run: npm ci
+
+      # Gate suite. The OS/Node matrix and real-binary integration run in
+      # ci.yml on every push to main, and the historical sweep runs weekly in
+      # sweep.yml; the publish job re-checks these gates before publishing.
+      - run: npm run lint
+      - run: npm test
+      - run: npm run freeze:check
+      - run: npm run consumer:types
+      - run: npm run bench:check
+      - run: npm run pm:check
+
+      - name: publish with trusted publishing and provenance
+        run: npm publish --provenance --access public
+
+      - name: verify the published package
+        run: |
+          node -e '
+            const { mkdtempSync, writeFileSync } = require("node:fs");
+            const { tmpdir } = require("node:os");
+            const { join } = require("node:path");
+            const { execFileSync } = require("node:child_process");
+            const fixture = mkdtempSync(join(tmpdir(), "typst-api-publish-check-"));
+            writeFileSync(join(fixture, "package.json"), JSON.stringify({ private: true, type: "module" }));
+            const spec = `@flukxr/typst-api@${process.env.PACKAGE_VERSION}`;
+            // The registry can take a moment to serve a fresh version.
+            let installed = false;
+            for (let attempt = 1; attempt <= 10 && !installed; attempt++) {
+              try {
+                execFileSync("npm", ["install", "--no-audit", "--no-fund", spec], { cwd: fixture, stdio: "inherit" });
+                installed = true;
+              } catch (error) {
+                if (attempt === 10) throw error;
+                console.log(`install attempt ${attempt} failed; retrying in 15s`);
+                Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 15000);
+              }
+            }
+            execFileSync(
+              process.execPath,
+              ["--input-type=module", "--eval",
+               "const m = await import(\"@flukxr/typst-api\");" +
+               "if (typeof m.createTypst !== \"function\") throw new Error(\"missing createTypst\");" +
+               "console.log(\"published package imports OK\")"],
+              { cwd: fixture, stdio: "inherit" },
+            );
+          '
+
+      - name: create GitHub release from the changelog
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node -e '
+            const text = require("node:fs").readFileSync("CHANGELOG.md", "utf8");
+            const version = process.env.PACKAGE_VERSION;
+            const lines = text.split(/\r?\n/);
+            const start = lines.findIndex((l) => l.startsWith(`## [${version}]`));
+            if (start === -1) throw new Error(`CHANGELOG.md has no section for ${version}`);
+            let end = lines.findIndex(
+              (l, i) => i > start && (l.startsWith("## [") || /^\[[^\]]+\]: /.test(l)),
+            );
+            if (end === -1) end = lines.length;
+            const body = lines.slice(start + 1, end).join("\n").trim();
+            require("node:fs").writeFileSync("release-notes.md", body + "\n");
+          '
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file release-notes.md \
+            --verify-tag

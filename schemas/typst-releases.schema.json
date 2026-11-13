@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "typst-releases.schema.json",
+  "type": "object",
+  "required": ["releases"],
+  "properties": {
+    "releases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["version", "tag", "date", "stable", "snapshotRequired"],
+        "properties": {
+          "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "tag": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "kind": {
+            "enum": ["minor", "patch"]
+          },
+          "stable": {
+            "type": "boolean"
+          },
+          "snapshotRequired": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "officialChangelog": {
+            "type": "string",
+            "format": "uri"
+          },
+          "sourceArgsFile": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# Copy this workflow into a consumer project (.github/workflows/typst.yml).
+# It pins the compiler through the `typst-<version>` dist-tag so builds stay
+# reproducible across packaging revisions.
+name: typst
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # Pin the compiler in your own package.json once:
+      #   npm install --save-exact @flukxr/typst-api @flukxr/typst-cli@typst-0.15.1
+      - run: npm ci
+      # ci/compile.mjs is examples/ci/compile.mjs copied into your repository.
+      - run: node ci/compile.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: typst-pdf
+          path: dist/main.pdf

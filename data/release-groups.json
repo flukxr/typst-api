@@ -1,0 +1,66 @@
+{
+  "groups": [
+    {
+      "id": "legacy",
+      "versions": [
+        "0.1.0",
+        "0.2.0",
+        "0.3.0",
+        "0.4.0"
+      ],
+      "purpose": "Establish process, compile/watch/fonts baseline, environment and TTY behavior."
+    },
+    {
+      "id": "rendering-and-packages",
+      "versions": [
+        "0.5.0",
+        "0.6.0"
+      ],
+      "purpose": "PNG, diagnostics, project roots, packages."
+    },
+    {
+      "id": "classic-cli",
+      "versions": [
+        "0.7.0",
+        "0.8.0",
+        "0.9.0",
+        "0.10.0"
+      ],
+      "purpose": "query, update policy, explicit format, certificate, classic behavior."
+    },
+    {
+      "id": "modern-foundation",
+      "versions": [
+        "0.11.0",
+        "0.11.1",
+        "0.12.0"
+      ],
+      "purpose": "init, stdin/stdout, inputs, modern compilation options."
+    },
+    {
+      "id": "html",
+      "versions": [
+        "0.13.0",
+        "0.13.1"
+      ],
+      "purpose": "Experimental HTML and watch server; Linux watch regression boundary."
+    },
+    {
+      "id": "tooling-accessibility",
+      "versions": [
+        "0.14.0",
+        "0.14.1",
+        "0.14.2"
+      ],
+      "purpose": "info, completions, dependency output, PDF accessibility, patch/security boundaries."
+    },
+    {
+      "id": "eval-bundle",
+      "versions": [
+        "0.15.0",
+        "0.15.1"
+      ],
+      "purpose": "eval, bundle, query compatibility and eval exit-code boundary."
+    }
+  ]
+}

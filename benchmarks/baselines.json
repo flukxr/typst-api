@@ -1,0 +1,28 @@
+{
+  "script": "scripts/benchmark.mjs",
+  "host": {
+    "platform": "win32",
+    "arch": "x64",
+    "node": "v24.18.0"
+  },
+  "compilerVersion": "0.15.1",
+  "check": false,
+  "scenarios": {
+    "coldDiscovery": {
+      "totalMedianMs": 33.697900000000004,
+      "cachedMedianMs": 0.004500000000007276,
+      "resolved": "package:0.15.1"
+    },
+    "warmCompile": {
+      "apiMedianMs": 184.0864999999999,
+      "childMedianMs": 181.8710000000001,
+      "bareMedianMs": 187.14370000000008,
+      "wrapperOverheadMedianMs": 2.2154999999997926
+    },
+    "largeOutput": {
+      "medianMs": 225.63930000000028,
+      "bytes": 321709,
+      "heapDeltaBytes": 370712
+    }
+  }
+}

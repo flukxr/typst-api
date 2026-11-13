@@ -1,0 +1,233 @@
+{
+  "$schema": "../schemas/typst-releases.schema.json",
+  "generatedFor": "typst-api agent handoff",
+  "checkedAt": "2026-07-18",
+  "policy": {
+    "stableOnlyByDefault": true,
+    "patchReleasesAreFirstClass": true,
+    "doNotCollapsePatchVersions": true,
+    "prereleasesRequireExplicitOptIn": true
+  },
+  "releases": [
+    {
+      "version": "0.1.0",
+      "tag": "v0.1.0",
+      "date": "2023-04-04",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Initial public CLI generation: compile, watch, fonts; non-zero failure status; --open.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.1.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.1.0/cli/src/main.rs"
+    },
+    {
+      "version": "0.2.0",
+      "tag": "v0.2.0",
+      "date": "2023-04-11",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Behavioral fixes; no known new public CLI command.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.2.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.2.0/cli/src/args.rs"
+    },
+    {
+      "version": "0.3.0",
+      "tag": "v0.3.0",
+      "date": "2023-04-26",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "TYPST_FONT_PATHS and TYPST_ROOT environment support.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.3.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.3.0/cli/src/args.rs"
+    },
+    {
+      "version": "0.4.0",
+      "tag": "v0.4.0",
+      "date": "2023-05-20",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "TTY/color behavior changes; no known new public command.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.4.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.4.0/cli/src/args.rs"
+    },
+    {
+      "version": "0.5.0",
+      "tag": "v0.5.0",
+      "date": "2023-06-09",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "PNG export and short diagnostic format.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.5.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.5.0/cli/src/args.rs"
+    },
+    {
+      "version": "0.6.0",
+      "tag": "v0.6.0",
+      "date": "2023-06-30",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Project-root restrictions and package management.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.6.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.6.0/cli/src/args.rs"
+    },
+    {
+      "version": "0.7.0",
+      "tag": "v0.7.0",
+      "date": "2023-08-07",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "query command; placement of shared CLI options changed.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.7.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.7.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.8.0",
+      "tag": "v0.8.0",
+      "date": "2023-09-13",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "update command, explicit --format, custom CA certificate.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.8.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.8.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.9.0",
+      "tag": "v0.9.0",
+      "date": "2023-10-31",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Fontconfig and output-extension/watch behavior changes.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.9.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.9.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.10.0",
+      "tag": "v0.10.0",
+      "date": "2023-12-04",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Primarily behavior changes; exact CLI surface must be snapshot-verified.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.10.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.10.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.11.0",
+      "tag": "v0.11.0",
+      "date": "2024-03-15",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "init, stdin, sys.inputs, color selection, timings.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.11.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.11.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.11.1",
+      "tag": "v0.11.1",
+      "date": "2024-05-17",
+      "kind": "patch",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Patch release; separate regression snapshot required.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.11.1/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.11.1/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.12.0",
+      "tag": "v0.12.0",
+      "date": "2024-10-18",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Pages, stdout output, package paths, jobs, dependency/PDF options.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.12.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.12.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.13.0",
+      "tag": "v0.13.0",
+      "date": "2025-02-19",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Experimental HTML and watch HTTP server.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.13.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.13.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.13.1",
+      "tag": "v0.13.1",
+      "date": "2025-03-07",
+      "kind": "patch",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Fixes high CPU usage in typst watch on Linux.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.13.1/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.13.1/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.14.0",
+      "tag": "v0.14.0",
+      "date": "2025-10-24",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "info, completions, dependency formats, accessibility/PDF options.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.14.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.14.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.14.1",
+      "tag": "v0.14.1",
+      "date": "2025-12-03",
+      "kind": "patch",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Patch release; dependency-output behavior regression fixed.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.14.1/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.14.1/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.14.2",
+      "tag": "v0.14.2",
+      "date": "2025-12-12",
+      "kind": "patch",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "Security patch; separate regression snapshot required.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.14.2/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.14.2/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.15.0",
+      "tag": "v0.15.0",
+      "date": "2026-06-15",
+      "kind": "minor",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "eval, bundle, multiple PDF standards, CLI output/behavior changes.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.15.0/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.15.0/crates/typst-cli/src/args.rs"
+    },
+    {
+      "version": "0.15.1",
+      "tag": "v0.15.1",
+      "date": "2026-07-17",
+      "kind": "patch",
+      "stable": true,
+      "snapshotRequired": true,
+      "summary": "eval failures now exit with code 1.",
+      "officialChangelog": "https://typst.app/docs/changelog/0.15.1/",
+      "sourceArgsFile": "https://github.com/typst/typst/blob/v0.15.1/crates/typst-cli/src/args.rs"
+    }
+  ]
+}

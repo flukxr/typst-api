@@ -1,0 +1,330 @@
+{
+  "policy": "High-level API sweep results. A version is `tested` only when every applicable high-level check passed against the installed binary; `failed` means a check failed with real evidence; `unavailable` means the binary could not be installed or resolved on this platform. No version is inferred to be tested.",
+  "platform": "linux",
+  "arch": "arm64",
+  "node": "v22.23.1",
+  "runAt": "2026-08-04",
+  "results": {
+    "0.1.0": {
+      "status": "tested",
+      "packageVersion": "0.1.0-npm.1",
+      "declaredVersion": "0.1.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.2.0": {
+      "status": "tested",
+      "packageVersion": "0.2.0-npm.1",
+      "declaredVersion": "0.2.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.3.0": {
+      "status": "tested",
+      "packageVersion": "0.3.0-npm.1",
+      "declaredVersion": "0.3.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.4.0": {
+      "status": "tested",
+      "packageVersion": "0.4.0-npm.1",
+      "declaredVersion": "0.4.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.5.0": {
+      "status": "tested",
+      "packageVersion": "0.5.0-npm.1",
+      "declaredVersion": "0.5.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.6.0": {
+      "status": "tested",
+      "packageVersion": "0.6.0-npm.1",
+      "declaredVersion": "0.6.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": "unsupported",
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.7.0": {
+      "status": "tested",
+      "packageVersion": "0.7.0-npm.1",
+      "declaredVersion": "0.7.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.8.0": {
+      "status": "tested",
+      "packageVersion": "0.8.0-npm.1",
+      "declaredVersion": "0.8.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.9.0": {
+      "status": "tested",
+      "packageVersion": "0.9.0-npm.1",
+      "declaredVersion": "0.9.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.10.0": {
+      "status": "tested",
+      "packageVersion": "0.10.0-npm.1",
+      "declaredVersion": "0.10.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.11.0": {
+      "status": "tested",
+      "packageVersion": "0.11.0-npm.1",
+      "declaredVersion": "0.11.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.11.1": {
+      "status": "tested",
+      "packageVersion": "0.11.1-npm.1",
+      "declaredVersion": "0.11.1",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.12.0": {
+      "status": "tested",
+      "packageVersion": "0.12.0-npm.1",
+      "declaredVersion": "0.12.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.13.0": {
+      "status": "tested",
+      "packageVersion": "0.13.0-npm.1",
+      "declaredVersion": "0.13.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.13.1": {
+      "status": "tested",
+      "packageVersion": "0.13.1-npm.1",
+      "declaredVersion": "0.13.1",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": "unsupported",
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.14.0": {
+      "status": "tested",
+      "packageVersion": "0.14.0-npm.1",
+      "declaredVersion": "0.14.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": true,
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.14.1": {
+      "status": "tested",
+      "packageVersion": "0.14.1-npm.1",
+      "declaredVersion": "0.14.1",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": true,
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.14.2": {
+      "status": "tested",
+      "packageVersion": "0.14.2-npm.1",
+      "declaredVersion": "0.14.2",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": true,
+        "eval": "unsupported",
+        "bundle": "unsupported",
+        "multiplePdfStandards": "unsupported"
+      }
+    },
+    "0.15.0": {
+      "status": "tested",
+      "packageVersion": "0.15.0-npm.2",
+      "declaredVersion": "0.15.0",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": true,
+        "eval": true,
+        "bundle": true,
+        "multiplePdfStandards": true
+      }
+    },
+    "0.15.1": {
+      "status": "tested",
+      "packageVersion": "0.15.1-npm.0",
+      "declaredVersion": "0.15.1",
+      "checks": {
+        "version": true,
+        "compileSourcePdf": true,
+        "fonts": true,
+        "watch": true,
+        "query": true,
+        "info": true,
+        "eval": true,
+        "bundle": true,
+        "multiplePdfStandards": true
+      }
+    }
+  },
+  "contiguousTestedThrough": "0.15.1"
+}
