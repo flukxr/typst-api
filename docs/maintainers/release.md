@@ -121,8 +121,15 @@ git push origin main v1.0.0
    (OIDC): the workflow holds `id-token: write`, publishes without any npm
    token, and the registry authenticates the `flukxr` scope against the
    configured OIDC identity provider;
-3. verifies the published package imports and reports the provenance URL
-   (the GitHub release page shows the attestation).
+3. creates the GitHub release from the version's `CHANGELOG.md` section;
+4. installs the published version in a scratch project and imports it,
+   retrying for up to ten minutes because the registry CDN caches package
+   metadata for up to five.
+
+If the verify step still fails after a successful publish, the release is
+already out: check `npm view @flukxr/typst-api@<version>` once the cache
+expires instead of re-running the workflow, which would try to publish the
+same version again.
 
 The `v` prefix is stripped by the workflow to derive the package version. The
 workflow never publishes for `-beta`-style or arbitrary tags; only tags

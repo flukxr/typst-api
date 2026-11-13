@@ -75,38 +75,8 @@ jobs:
       - name: publish with trusted publishing and provenance
         run: npm publish --provenance --access public
 
-      - name: verify the published package
-        run: |
-          node -e '
-            const { mkdtempSync, writeFileSync } = require("node:fs");
-            const { tmpdir } = require("node:os");
-            const { join } = require("node:path");
-            const { execFileSync } = require("node:child_process");
-            const fixture = mkdtempSync(join(tmpdir(), "typst-api-publish-check-"));
-            writeFileSync(join(fixture, "package.json"), JSON.stringify({ private: true, type: "module" }));
-            const spec = `@flukxr/typst-api@${process.env.PACKAGE_VERSION}`;
-            // The registry can take a moment to serve a fresh version.
-            let installed = false;
-            for (let attempt = 1; attempt <= 10 && !installed; attempt++) {
-              try {
-                execFileSync("npm", ["install", "--no-audit", "--no-fund", spec], { cwd: fixture, stdio: "inherit" });
-                installed = true;
-              } catch (error) {
-                if (attempt === 10) throw error;
-                console.log(`install attempt ${attempt} failed; retrying in 15s`);
-                Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 15000);
-              }
-            }
-            execFileSync(
-              process.execPath,
-              ["--input-type=module", "--eval",
-               "const m = await import(\"@flukxr/typst-api\");" +
-               "if (typeof m.createTypst !== \"function\") throw new Error(\"missing createTypst\");" +
-               "console.log(\"published package imports OK\")"],
-              { cwd: fixture, stdio: "inherit" },
-            );
-          '
-
+      # The release is created right after publishing, so a slow registry
+      # cache cannot leave a published version without its GitHub release.
       - name: create GitHub release from the changelog
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -128,3 +98,36 @@ jobs:
             --title "$GITHUB_REF_NAME" \
             --notes-file release-notes.md \
             --verify-tag
+
+      - name: verify the published package
+        run: |
+          node -e '
+            const { mkdtempSync, writeFileSync } = require("node:fs");
+            const { tmpdir } = require("node:os");
+            const { join } = require("node:path");
+            const { execFileSync } = require("node:child_process");
+            const fixture = mkdtempSync(join(tmpdir(), "typst-api-publish-check-"));
+            writeFileSync(join(fixture, "package.json"), JSON.stringify({ private: true, type: "module" }));
+            const spec = `@flukxr/typst-api@${process.env.PACKAGE_VERSION}`;
+            // The registry CDN caches package metadata for up to five minutes, so a
+            // fresh version can take that long to become installable.
+            let installed = false;
+            for (let attempt = 1; attempt <= 40 && !installed; attempt++) {
+              try {
+                execFileSync("npm", ["install", "--prefer-online", "--no-audit", "--no-fund", spec], { cwd: fixture, stdio: "inherit" });
+                installed = true;
+              } catch (error) {
+                if (attempt === 40) throw error;
+                console.log(`install attempt ${attempt} failed; retrying in 15s`);
+                Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 15000);
+              }
+            }
+            execFileSync(
+              process.execPath,
+              ["--input-type=module", "--eval",
+               "const m = await import(\"@flukxr/typst-api\");" +
+               "if (typeof m.createTypst !== \"function\") throw new Error(\"missing createTypst\");" +
+               "console.log(\"published package imports OK\")"],
+              { cwd: fixture, stdio: "inherit" },
+            );
+          '
