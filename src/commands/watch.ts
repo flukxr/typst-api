@@ -21,6 +21,7 @@ import type {
   CompileFileDestination,
   CompileFileInput,
   CompileSourceInput,
+  TypstLogEvent,
   TypstWatchEvents,
   TypstWatchHandle,
   UnknownVersionPolicy,
@@ -130,6 +131,10 @@ export async function watchCommand(
     normalisedOptions.env,
     normalisedOptions.envMode ?? "merge",
   );
+  // Same inheritance as client.run(). The client's timeoutMs is deliberately
+  // not inherited: a watch process is meant to outlive any default timeout.
+  const diagnostics = normalisedOptions.diagnostics ?? context.diagnostics;
+  const onLog = normalisedOptions.onLog ?? context.onLog;
   const runOptions = {
     cwd: normalisedOptions.cwd ?? context.cwd,
     env,
@@ -144,12 +149,8 @@ export async function watchCommand(
     ...(normalisedOptions.timeoutMs === undefined
       ? {}
       : { timeoutMs: normalisedOptions.timeoutMs }),
-    ...(normalisedOptions.diagnostics === undefined
-      ? {}
-      : { diagnostics: normalisedOptions.diagnostics }),
-    ...(normalisedOptions.onLog === undefined
-      ? {}
-      : { onLog: normalisedOptions.onLog }),
+    ...(diagnostics === undefined ? {} : { diagnostics }),
+    ...(onLog === undefined ? {} : { onLog }),
   };
 
   // From here on a temporary scope exists. Any failure before the process
@@ -362,6 +363,9 @@ export interface WatchContext {
   readonly env: Readonly<NodeJS.ProcessEnv>;
   readonly terminationGraceMs: number;
   readonly unknownVersionPolicy: UnknownVersionPolicy;
+  /** Client-level defaults; a watch option of the same name wins. */
+  readonly diagnostics?: boolean | undefined;
+  readonly onLog?: ((event: TypstLogEvent) => void) | undefined;
   version(): Promise<{ readonly version: string }>;
 }
 

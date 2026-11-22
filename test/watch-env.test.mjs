@@ -34,7 +34,12 @@ function dumpEnvironmentScript() {
   ].join("\n");
 }
 
-function watchClient(directory, baseEnv, versionEnvironment = {}) {
+function watchClient(
+  directory,
+  baseEnv,
+  versionEnvironment = {},
+  clientOptions = {},
+) {
   const client = new TypstClientImpl(
     {
       executable: node,
@@ -42,7 +47,7 @@ function watchClient(directory, baseEnv, versionEnvironment = {}) {
       cwd: directory,
       env: { ...process.env, ...baseEnv, ...versionEnvironment },
     },
-    {},
+    clientOptions,
   );
   client.run = async (args) => {
     if (args[0] === "--version") {
@@ -91,6 +96,49 @@ test("watch envMode replace drops the inherited client environment", async () =>
   );
   assert.equal(dumped.MARKER, "1");
   assert.equal(dumped.MARKER_BASE, undefined);
+});
+
+async function watchWithLogging(clientOptions, watchOptions) {
+  const directory = mkdtempSync(join(tmpdir(), "typst-api-watch-log-"));
+  try {
+    writeFileSync(
+      join(directory, "watch"),
+      "process.stderr.write('error: x\\n');",
+    );
+    const client = watchClient(directory, {}, {}, clientOptions);
+    const watcher = await client.watch({
+      input: { kind: "file", path: "document.typ" },
+      output: { kind: "file", path: "out.pdf" },
+      ...watchOptions,
+    });
+    return await watcher.closed;
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+test("watch inherits the client's diagnostics and onLog defaults", async () => {
+  const events = [];
+  const result = await watchWithLogging(
+    { diagnostics: true, onLog: (event) => events.push(event.kind) },
+    {},
+  );
+  assert.equal(result.diagnostics?.length, 1);
+  assert.equal(result.diagnostics[0].message, "x");
+  assert.ok(events.includes("spawn"));
+  assert.ok(events.includes("exit"));
+});
+
+test("watch options override the client's diagnostics and onLog defaults", async () => {
+  const clientEvents = [];
+  const callEvents = [];
+  const result = await watchWithLogging(
+    { diagnostics: true, onLog: (event) => clientEvents.push(event.kind) },
+    { diagnostics: false, onLog: (event) => callEvents.push(event.kind) },
+  );
+  assert.equal(result.diagnostics, undefined);
+  assert.equal(clientEvents.length, 0);
+  assert.ok(callEvents.includes("spawn"));
 });
 
 test("watch emits a typed error when the process dies on its own", async () => {

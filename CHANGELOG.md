@@ -7,6 +7,11 @@ separate compatibility checkpoints.
 
 ## [Unreleased]
 
+### Fixed
+
+- `watch()` now inherits the client-level `diagnostics` and `onLog`
+  defaults, like every other command. Options passed to `watch()` still win.
+
 ## [1.0.0] - 2026-11-13
 
 First public release. The public contract is frozen in
