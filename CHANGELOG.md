@@ -18,6 +18,12 @@ separate compatibility checkpoints.
   `ERR_PACKAGE_PATH_NOT_EXPORTED`: the export map has a `default` condition,
   so CommonJS code loads the package on Node versions with `require(esm)`.
 
+### Documentation
+
+- The README states that executable discovery stops at the first configured
+  source, and a new guide, `docs/guides/servers.md`, covers rendering many
+  documents: font scanning, concurrency and pinning.
+
 ## [1.0.0] - 2026-11-13
 
 First public release. The public contract is frozen in

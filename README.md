@@ -140,6 +140,21 @@ for (const item of settled) {
 }
 ```
 
+### On a server
+
+Every call starts a `typst` process, and for small documents most of its time
+goes to scanning system fonts. A server that renders many documents should
+pass its fonts explicitly and skip the scan:
+
+```js
+const typst = await createTypst({
+  defaults: { fontPaths: ["./fonts"], ignoreSystemFonts: true },
+});
+```
+
+[`docs/guides/servers.md`](docs/guides/servers.md) has the measurements and
+more advice.
+
 ### Newer Typst flags
 
 Every high-level call accepts `extraArgs`: raw CLI arguments passed without
@@ -236,6 +251,12 @@ the destination kind is not statically known.
 3. the `TYPST_PATH` environment variable;
 4. `PATH` (with Windows `PATHEXT` support).
 
+The first source that is set decides. An explicit path or `TYPST_PATH` that
+does not point to a usable file, or an installed launcher package that is
+broken, is an error rather than a reason to try the next source; only a
+launcher package that is not installed at all is skipped. A client keeps the
+executable it resolved for its whole lifetime.
+
 `discoverTypstExecutable()` exposes the same logic directly, and the
 `TypstExecutable*Error` family reports exactly what went wrong (not found, not
 a file, not executable, version mismatch, …). `@flukxr/typst-cli` is a
@@ -318,6 +339,7 @@ Documentation:
 | [`docs/guides/troubleshooting.md`](docs/guides/troubleshooting.md)                       | Common issues: discovery, Windows shims, version gates           |
 | [`docs/guides/upgrading-typst.md`](docs/guides/upgrading-typst.md)                       | Moving between Typst releases and package versions               |
 | [`docs/guides/package-managers.md`](docs/guides/package-managers.md)                     | npm, pnpm, and Yarn behavior and dist-tag pinning                |
+| [`docs/guides/servers.md`](docs/guides/servers.md)                                       | Rendering many documents: fonts, concurrency, pinning            |
 | [`CHANGELOG.md`](CHANGELOG.md)                                                           | Release notes                                                    |
 | [`docs/maintainers/`](docs/maintainers/)                                                 | Maintainer material: release process, decisions, evidence policy |
 
