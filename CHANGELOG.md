@@ -7,6 +7,8 @@ separate compatibility checkpoints.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-11-22
+
 ### Fixed
 
 - `watch()` now inherits the client-level `diagnostics` and `onLog`
@@ -106,5 +108,6 @@ First public release. The public contract is frozen in
   destination only after a successful compile; unrelated files are never
   deleted.
 
-[Unreleased]: https://github.com/flukxr/typst-api/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/flukxr/typst-api/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/flukxr/typst-api/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/flukxr/typst-api/releases/tag/v1.0.0
