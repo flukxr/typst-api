@@ -124,6 +124,23 @@ try {
     fixture,
   );
   assertSucceeded(importResult, "fixture import");
+
+  // CommonJS consumers reach the same ESM entry through require(esm), which
+  // only some supported Node versions have.
+  if (process.features.require_module === true) {
+    const requireResult = await run(
+      process.execPath,
+      [
+        "--input-type=commonjs",
+        "--eval",
+        'if (typeof require("@flukxr/typst-api").createTypst !== "function") process.exit(1);',
+      ],
+      fixture,
+    );
+    assertSucceeded(requireResult, "fixture require");
+  } else {
+    console.log("Skipping the require() check: this Node has no require(esm).");
+  }
 } finally {
   await rm(temporaryRoot, { force: true, recursive: true });
 }

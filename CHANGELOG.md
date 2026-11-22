@@ -14,6 +14,9 @@ separate compatibility checkpoints.
 - A `for await` iterator over a watcher that is not reading keeps at most the
   last 64 cycles, the same bound as cycles reported before the first
   iterator. The oldest are dropped first; `cycle.index` shows the gap.
+- `require("@flukxr/typst-api")` no longer fails with
+  `ERR_PACKAGE_PATH_NOT_EXPORTED`: the export map has a `default` condition,
+  so CommonJS code loads the package on Node versions with `require(esm)`.
 
 ## [1.0.0] - 2026-11-13
 

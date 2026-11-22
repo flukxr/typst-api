@@ -19,7 +19,8 @@ Windows x64, Linux x64/arm64, and macOS arm64.
 
 ## Installation
 
-Requires Node.js 20 or newer.
+Requires Node.js 20 or newer. The package is an ES module; CommonJS code can
+`require()` it on Node versions that load ES modules that way (20.19+, 22.12+).
 
 ```sh
 npm install @flukxr/typst-api
