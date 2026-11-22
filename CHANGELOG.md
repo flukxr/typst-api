@@ -11,6 +11,9 @@ separate compatibility checkpoints.
 
 - `watch()` now inherits the client-level `diagnostics` and `onLog`
   defaults, like every other command. Options passed to `watch()` still win.
+- A `for await` iterator over a watcher that is not reading keeps at most the
+  last 64 cycles, the same bound as cycles reported before the first
+  iterator. The oldest are dropped first; `cycle.index` shows the gap.
 
 ## [1.0.0] - 2026-11-13
 

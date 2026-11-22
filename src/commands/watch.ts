@@ -225,7 +225,7 @@ export async function watchCommand(
   const deliverCycle = (cycle: WatchCycleInfo): void => {
     if (earlyCycles !== undefined) {
       earlyCycles.push(cycle);
-      if (earlyCycles.length > MAX_EARLY_CYCLES) earlyCycles.shift();
+      if (earlyCycles.length > MAX_BUFFERED_CYCLES) earlyCycles.shift();
     }
     for (const queue of cycleQueues) queue.push(cycle);
   };
@@ -577,8 +577,12 @@ export function createCycleDetector(
   };
 }
 
-/** Cycles kept for the first iterator when none exists yet. */
-const MAX_EARLY_CYCLES = 64;
+/**
+ * Cycles kept for a consumer that is not reading them yet: for the first
+ * iterator before it exists, and in each iterator's queue. The oldest are
+ * dropped first; `index` shows the gap to a consumer that falls behind.
+ */
+const MAX_BUFFERED_CYCLES = 64;
 
 /**
  * One `for await` consumer of watch cycles. Iteration ends when the watcher
@@ -602,8 +606,12 @@ class CycleQueue implements AsyncIterator<WatchCycleInfo> {
   push(cycle: WatchCycleInfo): void {
     if (this.done) return;
     const waiter = this.waiters.shift();
-    if (waiter !== undefined) waiter({ value: cycle, done: false });
-    else this.items.push(cycle);
+    if (waiter !== undefined) {
+      waiter({ value: cycle, done: false });
+      return;
+    }
+    this.items.push(cycle);
+    if (this.items.length > MAX_BUFFERED_CYCLES) this.items.shift();
   }
 
   finish(): void {

@@ -98,6 +98,48 @@ test("watch envMode replace drops the inherited client environment", async () =>
   assert.equal(dumped.MARKER_BASE, undefined);
 });
 
+/** Runs a fake watcher that reports `count` cycles and drains an idle iterator. */
+async function bufferedCycles(count) {
+  const directory = mkdtempSync(join(tmpdir(), "typst-api-watch-cycles-"));
+  try {
+    writeFileSync(
+      join(directory, "watch"),
+      `process.stderr.write("compiling ...\\ncompiled successfully in 1ms\\n".repeat(${count}));`,
+    );
+    const client = watchClient(directory, {});
+    const watcher = await client.watch({
+      input: { kind: "file", path: "document.typ" },
+      output: { kind: "file", path: "out.pdf" },
+    });
+    // The iterator exists but reads nothing until the watcher has settled.
+    const iterator = watcher[Symbol.asyncIterator]();
+    await watcher.closed;
+    const indexes = [];
+    for (;;) {
+      const { value, done } = await iterator.next();
+      if (done) break;
+      indexes.push(value.index);
+    }
+    return indexes;
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+}
+
+test("an idle watch iterator keeps all of the last 64 cycles", async () => {
+  const indexes = await bufferedCycles(64);
+  assert.equal(indexes.length, 64);
+  assert.equal(indexes[0], 1);
+  assert.equal(indexes.at(-1), 64);
+});
+
+test("an idle watch iterator drops the oldest cycle beyond 64", async () => {
+  const indexes = await bufferedCycles(65);
+  assert.equal(indexes.length, 64);
+  assert.equal(indexes[0], 2);
+  assert.equal(indexes.at(-1), 65);
+});
+
 async function watchWithLogging(clientOptions, watchOptions) {
   const directory = mkdtempSync(join(tmpdir(), "typst-api-watch-log-"));
   try {
